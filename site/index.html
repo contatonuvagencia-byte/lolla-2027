@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Lolla 2027</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style id="css">
+/* Layout: festival wristband hero, a ticket-stub summary, then cost cards, two money trackers and the timeline */
+:root{
+  --paper:#F4F1F8;--card:#FFFFFF;--ink:#1D1330;--muted:#6B6180;--line:#E2DCEB;
+  --hot:#D2367E;--hot-ink:#FFFFFF;--sky:#2F6FDB;--ok:#1F8A5B;--okbg:#E3F4EA;--warn:#9A6514;--warnbg:#FBF0DC;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"DM Sans",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#140E1F;--card:#1F1830;--ink:#F1EDF7;--muted:#A69CBB;--line:#352B4A;
+  --hot:#FF5FA2;--hot-ink:#1A0B14;--sky:#7EA8FF;--ok:#5CD39A;--okbg:#173326;--warn:#F2B85B;--warnbg:#3A2C12;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#140E1F;--card:#1F1830;--ink:#F1EDF7;--muted:#A69CBB;--line:#352B4A;
+  --hot:#FF5FA2;--hot-ink:#1A0B14;--sky:#7EA8FF;--ok:#5CD39A;--okbg:#173326;--warn:#F2B85B;--warnbg:#3A2C12;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:grid;gap:28px}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700}
+.lab{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+.save{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));margin:0;font-size:12px;background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;z-index:5}
+.save:empty{display:none}
+
+.hero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+.hero .eyebrow{margin:0 0 6px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);font-weight:700}
+.hero h1{font-size:clamp(44px,11vw,88px);line-height:.9;font-weight:800;letter-spacing:-.03em}
+.hero h1 span{color:var(--hot)}
+.hero .sub{margin:10px 0 0;color:var(--muted)}
+.count{display:flex;align-items:baseline;gap:8px;background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:14px}
+.count b{font-family:var(--f-mono);font-size:32px}
+.count span{font-size:13px}
+
+.stub{display:flex;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:18px;position:relative;overflow:hidden}
+.stub-main{flex:2 1 320px;padding:22px;display:grid;gap:12px;min-width:0}
+.stub-side{flex:1 1 220px;padding:22px;display:grid;gap:18px;border-left:2px dashed var(--line);position:relative;min-width:0}
+.stub-side::before,.stub-side::after{content:"";position:absolute;left:-11px;width:20px;height:20px;border-radius:50%;background:var(--paper)}
+.stub-side::before{top:-11px}.stub-side::after{bottom:-11px}
+.stat b{font-size:22px;display:block;margin-top:2px}
+.stat.big b{font-size:clamp(30px,7vw,44px);color:var(--hot)}
+.of{color:var(--muted);font-size:13px}
+.bar{height:12px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--hot);border-radius:999px;transition:width .4s}
+.bar.sky i{background:var(--sky)}
+.bar.ok i{background:var(--ok)}
+.pct{margin:0;font-size:13px;color:var(--muted)}
+.split{margin:0;font-size:13px;color:var(--muted)}
+
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
+.sec-head h2{font-size:24px;font-weight:800}
+.sec-head p{margin:0;color:var(--muted);font-size:13px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;align-content:start;min-width:0}
+.item.is-paid{border-color:var(--ok)}
+.item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.item h3{font-size:17px;font-weight:600}
+.when{margin:0;color:var(--muted);font-size:13px}
+.item-val{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cur{font-family:var(--f-mono);color:var(--muted);font-size:14px}
+input{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.item-val input{font-family:var(--f-mono);font-weight:700;font-size:18px;width:9ch;flex:1 1 9ch}
+input:focus-visible,button:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--warnbg);color:var(--warn)}
+.tag.fixed{background:var(--okbg);color:var(--ok)}
+button{font:inherit;cursor:pointer}
+.chip{border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.chip.ok{background:var(--okbg);color:var(--ok);border-color:transparent}
+
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.panels{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:14px;align-content:start;min-width:0}
+.panel h2{font-size:22px;font-weight:800}
+.hint{margin:4px 0 0;color:var(--muted);font-size:13px}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.trio b{font-size:15px;display:block}
+.tip{margin:0;font-size:13px;background:var(--paper);border-radius:10px;padding:10px 12px}
+.tip b{font-family:var(--f-mono)}
+.add{display:flex;flex-wrap:wrap;gap:8px}
+.add input[type=number]{flex:1 1 110px;font-family:var(--f-mono)}
+.add input[type=month]{flex:1 1 130px}
+.add button{background:var(--hot);color:var(--hot-ink);border:0;border-radius:10px;padding:8px 16px;font-weight:700}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.log li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--paper);font-size:14px}
+.log li span{flex:1}
+.log li.empty{color:var(--muted);font-size:13px}
+.del{border:0;background:transparent;color:var(--muted);font-size:18px;line-height:1;padding:2px 6px;border-radius:6px}
+.del:hover{color:var(--hot)}
+
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.timeline li{display:grid;grid-template-columns:110px 22px 1fr;gap:12px;align-items:start;padding-bottom:16px;position:relative}
+.timeline .q{font-family:var(--f-mono);font-size:13px;color:var(--muted);padding-top:1px}
+.timeline .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);background:var(--card);margin-top:3px;position:relative;z-index:1}
+.timeline li:not(:last-child)::after{content:"";position:absolute;left:calc(110px + 12px + 7px);top:22px;bottom:0;width:2px;background:var(--line)}
+.timeline li.done .dot{background:var(--ok);border-color:var(--ok)}
+.timeline li.done .t{color:var(--muted);text-decoration:line-through}
+.timeline li.final .dot{background:var(--hot);border-color:var(--hot)}
+.timeline .t{margin:0}
+@media (max-width:480px){.timeline li{grid-template-columns:72px 22px 1fr}.timeline li:not(:last-child)::after{left:calc(72px + 12px + 7px)}}
+.mode{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.mode p{margin:0;font-size:13px;color:var(--muted);flex:1 1 240px}
+.mode p b{color:var(--ink)}
+.seg{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{border:0;background:transparent;color:var(--muted);font-weight:700;font-size:14px;padding:7px 16px;border-radius:999px}
+.seg button[aria-pressed="true"]{background:var(--hot);color:var(--hot-ink)}
+.share{margin:0;font-size:13px;color:var(--ok);font-weight:700}
+.share s{color:var(--muted);font-weight:400}
+.why{margin:-4px 0 0;font-size:12px;color:var(--muted)}
+.plano{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.plano li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:4px;min-width:0}
+.plano li.voo{border-color:var(--hot);background:color-mix(in srgb,var(--hot) 7%,var(--card))}
+.plano .pm{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.plano .pm small{text-transform:none;letter-spacing:0;font-weight:500}
+.plano b{font-size:20px}
+.plano .pd{font-size:12px;color:var(--muted)}
+.mode .seg button{font-size:13px;padding:6px 12px}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/lolla.js"></script>
+</head>
+<body>
+
+<p id="save" class="save" aria-live="polite"></p>
+<div id="app"></div>
+<script id="state" type="application/json">{"items": [{"id": "ingresso", "nome": "Ingresso Lolla Day", "quando": "Lolla Day", "valor": 600, "est": false, "pago": false}, {"id": "voo", "nome": "Voo BH ⇄ Congonhas", "quando": "Novembro, no cartão como conta normal", "valor": 700, "est": true, "pago": false}, {"id": "hotel", "nome": "Hospedagem", "quando": "Preencha com a sua reserva", "valor": 1086.91, "est": false, "pago": false, "div": true, "noites": 3, "limpeza": 150}, {"id": "uber", "nome": "Uber", "quando": "Só aeroporto e volta à noite", "valor": 300, "est": false, "pago": false, "div": true, "sozinha": {"sex": 30, "sab": 70}}, {"id": "trem", "nome": "Trem e metrô", "quando": "7 viagens de R$ 5,40 · cada uma paga a sua", "valor": 40, "est": true, "pago": false}, {"id": "role", "nome": "Comida e passeios", "quando": "Sem café no apê, mas tem cozinha pra um mercadinho", "valor": 850, "est": true, "pago": false}, {"id": "vooamiga", "nome": "Volta da amiga · você paga", "quando": "Congonhas → BH · compra junto com o seu", "valor": 350, "est": true, "pago": false, "so": "amiga"}, {"id": "reserva", "nome": "Reserva pra imprevisto", "quando": "Não é pra gastar, é pra respirar tranquila", "valor": 700, "est": false, "pago": false}], "mae": [], "cofre": [], "amiga": false, "chegada": "sab", "versao": "v4", "maeNov": 297.6, "cofreDez": 453.97}</script>
+<script id="appjs">
+(function(){
+var $=function(s){return document.querySelector(s)};
+var brl=function(n){return (Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var S;try{S=JSON.parse(document.getElementById('state').textContent)}catch(e){S={items:[],mae:[],cofre:[]}}
+var timer=null;
+var MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function ym(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function fm(s){var p=String(s||'').split('-');if(p.length<2)return esc(s);return MESES[(+p[1]||1)-1]+'/'+p[0].slice(2)}
+function sum(a){return a.reduce(function(t,x){return t+(Number(x.v)||0)},0)}
+function get(id){return S.items.find(function(i){return i.id===id})||{valor:0}}
+function split(i){return !!(ver()==='v3'&&i.div)}
+function vis(i){return !i.so||(i.so==='amiga'&&ver()==='v3')}
+function ver(){return ['v1','v2','v3','v4'].indexOf(S.versao)>-1?S.versao:(S.amiga?'v3':'v1')}
+function cheg(){return S.chegada==='sex'?'sex':'sab'}
+function part(i){if(!vis(i))return 0;var v=Number(i.valor)||0;if(!split(i))return v;var r;
+  if(i.noites){var lim=Number(i.limpeza)||0,sol=cheg()==='sab'?1:0;r=(v-lim)/i.noites*(sol+(i.noites-sol)/2)+lim/2}
+  else if(i.sozinha){var a=Math.min(v,Number(i.sozinha[cheg()])||0);r=a+(v-a)/2}
+  else r=v/2;
+  return Math.round(r*100)/100}
+function why(i){if(i.noites)return cheg()==='sab'?'Sexta sozinha + sábado e domingo divididos + metade da limpeza':'3 noites divididas meio a meio';if(i.sozinha)return cheg()==='sab'?'Corridas de sexta só suas, o resto dividido':'Corrida do aeroporto só sua, o resto dividido';return 'Meio a meio'}
+function calc(){
+  var total=S.items.reduce(function(t,i){return t+part(i)},0);
+  var ingresso=Number(get('ingresso').valor)||0;
+  var devolvido=sum(S.mae),guardado=sum(S.cofre);
+  var cofreMeta=Math.max(0,total-ingresso);
+  var maeFalta=Math.max(0,ingresso-devolvido),cofreFalta=Math.max(0,cofreMeta-guardado);
+  var now=new Date();
+  var V=ver(),cur=now.getFullYear()*12+now.getMonth(),OUT=2026*12+9,NOV=2026*12+10,DEZ=2026*12+11,FIM=2027*12+2;
+  var ini=Math.max(cur,NOV),M=[];for(var m=ini;m<=FIM;m++)M.push(m);if(!M.length)M=[cur];
+  var maeM=M.filter(function(m){return V==='v1'?m<=DEZ:m>=NOV});if(!maeM.length)maeM=[M[0]];
+  var vooFalta=['voo','vooamiga'].reduce(function(t,id){var i=get(id);return t+(i.pago?0:part(i))},0);
+  var vooConta=V==='v4'?part(get('voo')):0;
+  if(vooConta){cofreMeta=Math.max(0,cofreMeta-vooConta);cofreFalta=Math.max(0,cofreMeta-guardado);vooFalta=0}
+  var primeiro=Math.min(vooFalta,cofreFalta),resto=cofreFalta-primeiro;
+  var vooM=primeiro>0?Math.max(NOV,M[0]):null;
+  var restM=M.filter(function(m){return vooM===null?true:m>vooM});if(!restM.length)restM=[M[M.length-1]];
+  if(V==='v4'){var JAN=2027*12;maeM=M.filter(function(m){return m===DEZ});if(!maeM.length)maeM=[M[M.length-1]];
+    var vParc=M.filter(function(m){return m>=DEZ});if(!vParc.length)vParc=[M[M.length-1]];
+    var dezG=Math.min(Number(S.cofreDez)||0,resto),jm=M.filter(function(m){return m>=JAN});if(!jm.length)jm=[M[M.length-1]];
+    restM=jm;vooM=null;var pagoNov=S.mae.filter(function(x){return String(x.d).indexOf('2026-11')===0}).reduce(function(t,x){return t+(Number(x.v)||0)},0);var maeNov=M.indexOf(NOV)>-1?Math.max(0,Math.min((Number(S.maeNov)||0)-pagoNov,maeFalta)):0}
+  var plano=M.map(function(m){var mae=V==='v4'?(m===NOV?maeNov:(maeM.indexOf(m)>-1?(maeFalta-maeNov)/maeM.length:0)):(maeM.indexOf(m)>-1?maeFalta/maeM.length:0),voo,cof;
+    if(V==='v4'){voo=vParc.indexOf(m)>-1?primeiro/vParc.length:0;cof=(m===DEZ&&M.indexOf(DEZ)>-1&&jm.indexOf(DEZ)<0?dezG:0)+(jm.indexOf(m)>-1?(resto-(M.indexOf(DEZ)>-1&&jm.indexOf(DEZ)<0?dezG:0))/jm.length:0)}
+    else{voo=m===vooM?primeiro:0;cof=restM.indexOf(m)>-1?resto/restM.length:0}
+    return {nome:MESES[m%12]+'/'+String(Math.floor(m/12)).slice(2),mae:mae,voo:voo,cof:cof,tot:mae+voo+cof,ult:m===FIM,nota:V==='v4'&&m===NOV?brl(mae)+' mãe · voo no cartão logo depois da fatura fechar':''}});
+  var meses=M.length,maeN=maeM.length;
+  var dias=Math.max(0,Math.ceil((new Date(2027,2,19)-now)/864e5));
+  var separado=Math.min(devolvido,ingresso)+Math.min(guardado,cofreMeta)+(vooConta&&get('voo').pago?vooConta:0);
+  return {total:total,ingresso:ingresso,devolvido:devolvido,guardado:guardado,cofreMeta:cofreMeta,maeFalta:maeFalta,cofreFalta:cofreFalta,
+    falta:maeFalta+cofreFalta+(vooConta&&!get('voo').pago?vooConta:0),vooConta:vooConta,meses:meses,plano:plano,primeiro:primeiro,maeN:maeN,maeNov:V==='v4'?maeNov:0,dezG:V==='v4'?dezG:0,restN:restM.length,resto:resto,dias:dias,separado:separado,
+    pct:total?Math.min(100,separado/total*100):0,maePct:ingresso?Math.min(100,devolvido/ingresso*100):0,
+    cofrePct:cofreMeta?Math.min(100,guardado/cofreMeta*100):0};
+}
+function log(list,key){
+  if(!list.length)return '<li class="empty">Nada registrado ainda. Coloca o primeiro valor aí em cima.</li>';
+  return list.map(function(x,i){return '<li><span>'+fm(x.d)+'</span><b class="num">'+brl(x.v)+'</b><button class="del" data-del="'+key+':'+i+'" aria-label="Remover registro">×</button></li>'}).join('');
+}
+function render(){
+  var c=calc(),mm=c.meses===1?'mês':'meses';
+  var items=S.items.filter(vis).map(function(i){
+    return '<article class="item'+(i.pago?' is-paid':'')+'"><div class="item-head"><h3>'+esc(i.nome)+'</h3><button class="chip'+(i.pago?' ok':'')+'" data-toggle="'+i.id+'" aria-pressed="'+(i.pago?'true':'false')+'">'+(i.pago?'Pago':'Pendente')+'</button></div>'+
+      '<p class="when">'+esc(i.quando)+'</p><div class="item-val"><span class="cur">R$</span><input id="v-'+i.id+'" data-val="'+i.id+'" type="number" inputmode="decimal" step="0.01" min="0" value="'+(Number(i.valor)||0)+'" aria-label="Valor de '+esc(i.nome)+'">'+
+      (i.est?'<span class="tag">estimativa</span>':'<span class="tag fixed">valor fechado</span>')+'</div>'+
+      (split(i)?'<p class="share">Sua parte: '+brl(part(i))+' <s>'+brl(i.valor)+'</s></p><p class="why">'+why(i)+'</p>':'')+'</article>';
+  }).join('');
+  var steps=[
+    {q:'Out/26',t:'Comprar o Lolla Day com o empréstimo da mãe',d:get('ingresso').pago},
+    {q:'Nov/26',t:ver()==='v4'?'Comprar o voo no cartão, como conta normal':ver()==='v3'?'Comprar o voo pra Congonhas e a volta da amiga':'Comprar o voo pra Congonhas',d:get('voo').pago&&(ver()!=='v3'||get('vooamiga').pago)},
+    {q:ver()==='v1'||ver()==='v4'?'Nov e Dez':'Nov a Mar',t:ver()==='v1'?'Quitar a mãe':'Devolver a mãe aos pouquinhos',d:c.maeFalta===0},
+    {q:ver()==='v4'?'Dez a Mar':'Dez a Mar',t:ver()==='v4'?'Cofrinho: '+brl(c.dezG)+' em dezembro e o resto de janeiro a março':'Alimentar o cofrinho todo mês',d:c.cofreFalta===0},
+    {q:'11/03',t:'Prazo final: tudo guardado',d:c.falta===0},
+    {q:'Até 12/03',t:'Pagar o apê em Santo Amaro (cancela grátis até 13/03)',d:get('hotel').pago},
+    {q:'19 a 22/03',t:'Lolla, passeios e Sweater Weather a plenos pulmões',d:false,f:true}
+  ].map(function(s){return '<li class="'+(s.d?'done':'')+(s.f?' final':'')+'"><span class="q">'+s.q+'</span><span class="dot" aria-hidden="true"></span><p class="t">'+s.t+'</p></li>'}).join('');
+  $('#app').innerHTML=
+  '<div class="wrap">'+
+  '<header class="hero"><div><p class="eyebrow">Interlagos · São Paulo</p><h1>Lolla <span>2027</span></h1><p class="sub">19 a 22 de março · The Neighbourhood na mira</p></div>'+
+  '<div class="count"><b>'+c.dias+'</b><span>dias pro festival</span></div></header>'+
+  '<section class="mode" aria-label="Versão do plano"><div class="seg" role="group">'+[['v4','Recomendada'],['v1','Sozinha · mãe até dez'],['v2','Sozinha · mãe até mar'],['v3','Com amiga']].map(function(o){return '<button type="button" id="ver-'+o[0]+'" data-ver="'+o[0]+'" aria-pressed="'+(ver()===o[0])+'">'+o[1]+'</button>'}).join('')+'</div>'+
+  (ver()==='v4'?'<p>Feita pras suas contas: o <b>voo vai no cartão como uma conta normal</b>, a mãe fica <b>quitada em novembro e dezembro</b> e o cofrinho pesa <b>quando o celular sai da fatura</b>.</p>':ver()==='v1'?'<p>Outubro fica livre. Você quita a <b>mãe em novembro e dezembro</b>, compra a <b>passagem em novembro</b> e guarda o resto <b>de dezembro a março</b>.</p>':
+   ver()==='v2'?'<p>Passagem em <b>novembro</b>, e a mãe e o resto vão sendo guardados <b>todo mês até 11/03</b>.</p>':
+   (function(){var eco=S.items.reduce(function(t,i){return t+(split(i)?(Number(i.valor)||0)-part(i):0)},0),volta=part(get('vooamiga'));return '<div class="seg" role="group" aria-label="Quando ela chega"><button type="button" id="cheg-sex" data-cheg="sex" aria-pressed="'+(cheg()==='sex')+'">Ela chega sexta à noite</button><button type="button" id="cheg-sab" data-cheg="sab" aria-pressed="'+(cheg()==='sab')+'">Ela chega sábado</button></div><p>Apê e Uber divididos <b>pelo tempo que cada uma fica</b>, ela paga o ônibus e você banca a <b>volta dela</b> junto com a sua passagem em novembro. '+(eco-volta>=0?'Você fica <b>'+brl(eco-volta)+'</b> no lucro':'Sai <b>'+brl(volta-eco)+'</b> a mais')+' comparado a ir sozinha.</p>'})())+'</section>'+
+  '<section class="stub" aria-label="Resumo"><div class="stub-main"><div class="stat big"><span class="lab">Já separei</span><b class="num">'+brl(c.separado)+'</b><span class="of">de '+brl(c.total)+' da viagem toda</span></div>'+
+  '<div class="bar"><i style="width:'+c.pct.toFixed(1)+'%"></i></div><p class="pct">'+Math.round(c.pct)+'% da viagem garantida</p></div>'+
+  '<div class="stub-side">'+(function(){var ps=c.plano.filter(function(m){return m.tot>0.005}),f={tot:0,nome:'-'},mx=ps.reduce(function(a,m){return m.tot>a.tot?m:a},ps[0]||f),mn=ps.reduce(function(a,m){return m.tot<a.tot?m:a},ps[0]||f);return '<div class="stat"><span class="lab">Mês mais pesado · '+mx.nome+'</span><b class="num">'+brl(mx.tot)+'</b></div><div class="stat"><span class="lab">Mês mais leve · '+mn.nome+'</span><b class="num">'+brl(mn.tot)+'</b><span class="of">tudo pronto até 11/03</span></div>'})()+
+  '<div class="stat"><span class="lab">Ainda falta</span><b class="num">'+brl(c.falta)+'</b></div></div></section>'+
+  '<section><div class="sec-head"><h2>Plano mês a mês</h2><p>'+(ver()==='v4'?'Mãe quitada até dezembro, o grosso do cofrinho de janeiro a março. Voo fora daqui, na fatura.':ver()==='v1'?'Mãe até dezembro, voo em novembro, resto até 11/03.':'Voo em novembro, o resto dividido até 11/03.')+'</p></div><ol class="plano">'+c.plano.map(function(m){var pz=[];if(m.mae>0.005)pz.push(brl(m.mae)+' mãe');if(m.voo>0.005)pz.push(brl(m.voo)+(ver()==='v3'?' voos':' voo'));if(m.cof>0.005)pz.push(brl(m.cof)+' cofrinho');if(ver()==='v4'&&m.voo>0.005)pz=pz.map(function(x){return x.replace(' voo',' parcela do voo')});return '<li'+((ver()!=='v4'&&m.voo>0.005)||m.nota?' class="voo"':'')+'><span class="pm">'+m.nome+(m.ult?' <small>até 11</small>':'')+'</span><b class="num">'+brl(m.tot)+'</b><span class="pd">'+(m.nota||pz.join(' · ')||'nada a guardar')+'</span></li>'}).join('')+'</ol></section>'+
+  '<section><div class="sec-head"><h2>Os gastos</h2><p>Toca no valor pra ajustar. Marca como pago quando sair do bolso.</p></div><div class="items">'+items+'</div></section>'+
+  '<div class="panels">'+
+  '<section class="panel"><div><h2>Devolver pra mãe</h2><p class="hint">Ela adianta o ingresso, você devolve aos pouquinhos.</p></div>'+
+  '<div class="trio"><div><span class="lab">Emprestado</span><b class="num">'+brl(c.ingresso)+'</b></div><div><span class="lab">Devolvido</span><b class="num">'+brl(c.devolvido)+'</b></div><div><span class="lab">Falta</span><b class="num">'+brl(c.maeFalta)+'</b></div></div>'+
+  '<div class="bar sky"><i style="width:'+c.maePct.toFixed(1)+'%"></i></div>'+
+  '<p class="tip">'+(c.maeFalta&&ver()==='v4'?(c.maeNov>0?'<b>'+brl(c.maeNov)+'</b> em novembro e ':'')+'<b>'+brl(c.maeFalta-c.maeNov)+'</b> em dezembro. Quitada antes do Natal.':c.maeFalta?'Devolvendo <b>'+brl(c.maeFalta/c.maeN)+'</b> por mês, você quita até '+(ver()==='v1'?'dezembro':'11/03')+'.':'Mãe quitada. Ela merece um abraço e um souvenir.')+'</p>'+
+  '<form class="add" data-form="mae"><input id="mae-v" type="number" inputmode="decimal" step="0.01" min="0" placeholder="Valor" aria-label="Valor devolvido"><input id="mae-d" type="month" value="'+ym()+'" aria-label="Mês"><button type="submit">Registrar</button></form>'+
+  '<ul class="log">'+log(S.mae,'mae')+'</ul></section>'+
+  '<section class="panel"><div><h2>Cofrinho do Lolla</h2><p class="hint">'+(ver()==='v4'?'Apê, transporte, comida, passeios e a reserva. O voo vai na fatura.':'Voo, apê, transporte, comida, passeios e a reserva.')+'</p></div>'+
+  '<div class="trio"><div><span class="lab">Meta</span><b class="num">'+brl(c.cofreMeta)+'</b></div><div><span class="lab">Guardado</span><b class="num">'+brl(c.guardado)+'</b></div><div><span class="lab">Falta</span><b class="num">'+brl(c.cofreFalta)+'</b></div></div>'+
+  '<div class="bar ok"><i style="width:'+c.cofrePct.toFixed(1)+'%"></i></div>'+
+  '<p class="tip">'+(c.cofreFalta?(ver()==='v4'?'O voo fica na fatura como conta normal. <b>'+brl(c.dezG)+'</b> em dezembro e uns <b>'+brl((c.resto-c.dezG)/3)+'</b> por mês de janeiro a março.':c.primeiro>0?'<b>'+brl(c.primeiro)+'</b> pro voo em novembro e <b>'+brl(c.resto/c.restN)+'</b> por mês depois, tudo pago até 11/03.':'Guardando <b>'+brl(c.resto/c.restN)+'</b> por mês, você chega lá com tudo pago até 11/03.'):'Cofrinho cheio. Agora é só curtir.')+'</p>'+
+  '<form class="add" data-form="cofre"><input id="cofre-v" type="number" inputmode="decimal" step="0.01" min="0" placeholder="Valor" aria-label="Valor guardado"><input id="cofre-d" type="month" value="'+ym()+'" aria-label="Mês"><button type="submit">Guardar</button></form>'+
+  '<ul class="log">'+log(S.cofre,'cofre')+'</ul></section>'+
+  '</div>'+
+  '<section><div class="sec-head"><h2>Linha do tempo</h2><p>Vai riscando conforme acontece.</p></div><ol class="timeline">'+steps+'</ol></section>'+
+  '</div>';
+  bind();
+}
+function bind(){
+  document.querySelectorAll('[data-cheg]').forEach(function(b){b.onclick=function(){if(cheg()===b.dataset.cheg)return;S.chegada=b.dataset.cheg;commit()}});
+  document.querySelectorAll('[data-ver]').forEach(function(b){b.onclick=function(){if(ver()===b.dataset.ver)return;S.versao=b.dataset.ver;S.amiga=S.versao==='v3';commit()}});
+  document.querySelectorAll('[data-toggle]').forEach(function(b){b.onclick=function(){var i=get(b.dataset.toggle);i.pago=!i.pago;commit()}});
+  document.querySelectorAll('[data-val]').forEach(function(inp){inp.onchange=function(){var v=parseFloat(String(inp.value).replace(',','.'));if(isNaN(v)||v<0)return;var i=get(inp.dataset.val);i.valor=Math.round(v*100)/100;i.est=false;commit()}});
+  document.querySelectorAll('[data-form]').forEach(function(f){f.onsubmit=function(e){e.preventDefault();var k=f.dataset.form;var v=parseFloat(String($('#'+k+'-v').value).replace(',','.'));if(isNaN(v)||v<=0)return;S[k].push({d:$('#'+k+'-d').value||ym(),v:Math.round(v*100)/100});commit()}});
+  document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var p=b.dataset.del.split(':');S[p[0]].splice(+p[1],1);commit()}});
+}
+var PAGINA="planner";
+function status(t){var el=$('#save');if(el)el.textContent=t}
+function commit(){
+  render();status('Salvando');clearTimeout(timer);
+  timer=setTimeout(function(){Lolla.save(PAGINA,S).then(function(){status('Tudo salvo')}).catch(function(){status('Não salvou. Confere a internet e tenta de novo.')})},600);
+}
+Lolla.boot(PAGINA,function(d){if(d)S=d;render()});
+})();
+</script>
+</body>
+</html>

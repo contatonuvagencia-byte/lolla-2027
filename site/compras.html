@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Compras do Lolla</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style id="css">
+/* Layout: same family as the Lolla 2027 planner. Hero, a receipt-style total strip, then grouped checklists with price inputs, and an add-item form */
+:root{
+  --paper:#F4F1F8;--card:#FFFFFF;--ink:#1D1330;--muted:#6B6180;--line:#E2DCEB;
+  --hot:#D2367E;--hot-ink:#FFFFFF;--sky:#2F6FDB;--ok:#1F8A5B;--okbg:#E3F4EA;--warn:#9A6514;--warnbg:#FBF0DC;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"DM Sans",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#140E1F;--card:#1F1830;--ink:#F1EDF7;--muted:#A69CBB;--line:#352B4A;
+  --hot:#FF5FA2;--hot-ink:#1A0B14;--sky:#7EA8FF;--ok:#5CD39A;--okbg:#173326;--warn:#F2B85B;--warnbg:#3A2C12;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#140E1F;--card:#1F1830;--ink:#F1EDF7;--muted:#A69CBB;--line:#352B4A;
+  --hot:#FF5FA2;--hot-ink:#1A0B14;--sky:#7EA8FF;--ok:#5CD39A;--okbg:#173326;--warn:#F2B85B;--warnbg:#3A2C12;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:grid;gap:26px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700}
+.save{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));margin:0;font-size:12px;background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;z-index:5}
+.save:empty{display:none}
+.hero .eyebrow{margin:0 0 6px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);font-weight:700}
+.hero h1{font-size:clamp(40px,10vw,76px);line-height:.92;font-weight:800;letter-spacing:-.03em}
+.hero h1 span{color:var(--hot)}
+.hero p{margin:10px 0 0;color:var(--muted);max-width:58ch}
+.sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.sum>div{padding:18px;display:grid;gap:2px;border-left:2px dashed var(--line);min-width:0}
+.sum>div:first-child{border-left:0}
+@media (max-width:560px){.sum{grid-template-columns:1fr}.sum>div{border-left:0;border-top:2px dashed var(--line)}.sum>div:first-child{border-top:0}}
+.lab{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.sum b{font-size:clamp(22px,5vw,30px)}
+.sum .big b{color:var(--hot)}
+.of{font-size:12px;color:var(--muted)}
+.bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:999px;transition:width .4s}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12px;color:var(--muted);margin:0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.group{display:grid;gap:10px}
+.g-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px}
+.g-head h2{font-size:22px;font-weight:800}
+.g-head p{margin:0;font-size:13px;color:var(--muted)}
+.list{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row input[type=checkbox]{width:20px;height:20px;accent-color:var(--ok);margin:0}
+.row .name{min-width:0}
+.row .name b{font-weight:600;display:block}
+.row .name small{display:block;font-size:12px;color:var(--muted)}
+.row.done .name b{text-decoration:line-through;color:var(--muted)}
+.row.have{opacity:.6}
+.row.have .name b{text-decoration:line-through}
+.ctrl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.price{display:flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.price input{width:7ch;font:inherit;font-weight:700;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:5px 6px;text-align:right}
+.chip{font:inherit;font-size:12px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--muted);padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--warnbg);color:var(--warn);border-color:transparent}
+.del{border:0;background:transparent;color:var(--muted);font-size:18px;line-height:1;padding:2px 4px;cursor:pointer;border-radius:6px}
+.del:hover{color:var(--hot)}
+.star{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--hot);margin-left:6px}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.add{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:10px}
+.add h2{font-size:18px;font-weight:800}
+.add form{display:flex;flex-wrap:wrap;gap:8px}
+.add input,.add select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.add #novo-nome{flex:2 1 200px}
+.add #novo-valor{flex:1 1 90px;font-family:var(--f-mono)}
+.add select{flex:1 1 140px}
+.add button{font:inherit;font-weight:700;background:var(--hot);color:var(--hot-ink);border:0;border-radius:10px;padding:8px 16px;cursor:pointer}
+.tip{margin:0;font-size:13px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/lolla.js"></script>
+</head>
+<body>
+
+<p id="save" class="save" aria-live="polite"></p>
+<div id="app"></div>
+<script id="state" type="application/json">{"grupos": [{"id": "lolla", "nome": "Pro Lolla", "sub": "O kit do dia do festival"}, {"id": "roupa", "nome": "Roupas e acessórios", "sub": "Só o que você não tiver ainda"}, {"id": "snack", "nome": "Snacks do festival", "sub": "Compra na semana da viagem"}, {"id": "sp", "nome": "Mercadinho em SP", "sub": "Primeiro dia, perto do estúdio"}], "itens": [{"id": "i1", "g": "lolla", "n": "Pochete com zíper", "d": "Transversal, pra usar na frente do corpo", "v": 60, "st": "", "top": true}, {"id": "i2", "g": "lolla", "n": "Power bank 10.000 mAh", "d": "Carregado na véspera, guarda pro Uber da volta", "v": 100, "st": "", "top": true}, {"id": "i3", "g": "lolla", "n": "Capa de chuva fininha ou poncho", "d": "Dobra e cabe na pochete", "v": 15, "st": ""}, {"id": "i4", "g": "lolla", "n": "Saquinhos zip lock transparentes", "d": "Obrigatório pros snacks entrarem", "v": 12, "st": ""}, {"id": "i5", "g": "lolla", "n": "Garrafinha de plástico leve", "d": "Entra vazia e sem tampa", "v": 20, "st": ""}, {"id": "i7", "g": "lolla", "n": "Álcool em gel e lenço umedecido", "d": "Tamanho de bolso", "v": 15, "st": ""}, {"id": "i8", "g": "roupa", "n": "Look do Lolla", "d": "Preto, jeans e algo vintage, vibe The Neighbourhood", "v": 100, "st": ""}, {"id": "i9", "g": "roupa", "n": "Jaquetinha leve ou camisa de botão", "d": "Pra amarrar na cintura e usar à noite", "v": 60, "st": ""}, {"id": "i10", "g": "roupa", "n": "Tênis confortável", "d": "Se não tiver um já amaciado", "v": 0, "st": ""}, {"id": "i11", "g": "roupa", "n": "Óculos de sol", "d": "", "v": 40, "st": ""}, {"id": "i13", "g": "roupa", "n": "Guarda-chuva pequeno", "d": "Pros dias de passeio", "v": 30, "st": ""}, {"id": "i15", "g": "snack", "n": "Barrinhas de cereal", "d": "", "v": 15, "st": ""}, {"id": "i16", "g": "snack", "n": "Castanhas ou mix de nuts", "d": "", "v": 20, "st": ""}, {"id": "i17", "g": "snack", "n": "Fruta cortada", "d": "Corta no estúdio e põe no zip lock", "v": 10, "st": ""}, {"id": "i18", "g": "sp", "n": "Café da manhã pros 3 dias", "d": "Pão, frios, fruta, iogurte e café. Já está no planner", "v": 70, "st": ""}, {"id": "i19", "g": "sp", "n": "Água pro estúdio", "d": "", "v": 10, "st": ""}]}</script>
+<script id="appjs">
+(function(){
+var $=function(s){return document.querySelector(s)};
+var brl=function(n){return (Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var S;try{S=JSON.parse(document.getElementById('state').textContent)}catch(e){S={grupos:[],itens:[]}}
+var timer=null;
+function find(id){return S.itens.find(function(i){return i.id===id})}
+function render(){
+  var buy=S.itens.filter(function(i){return i.st!=='tenho'});
+  var total=buy.reduce(function(t,i){return t+(Number(i.v)||0)},0);
+  var gasto=buy.filter(function(i){return i.st==='ok'}).reduce(function(t,i){return t+(Number(i.v)||0)},0);
+  var falta=total-gasto,nOk=buy.filter(function(i){return i.st==='ok'}).length;
+  var pct=buy.length?nOk/buy.length*100:0;
+  var groups=S.grupos.map(function(g){
+    var its=S.itens.filter(function(i){return i.g===g.id});
+    var sub=its.filter(function(i){return i.st!=='tenho'}).reduce(function(t,i){return t+(Number(i.v)||0)},0);
+    return '<section class="group"><div class="g-head"><h2>'+esc(g.nome)+'</h2><p>'+esc(g.sub)+' · <span class="num">'+brl(sub)+'</span></p></div><ul class="list">'+
+      (its.length?its.map(function(i){
+        return '<li class="row'+(i.st==='ok'?' done':'')+(i.st==='tenho'?' have':'')+'"><input type="checkbox" id="c-'+i.id+'" data-ok="'+i.id+'" aria-label="Comprado: '+esc(i.n)+'"'+(i.st==='ok'?' checked':'')+(i.st==='tenho'?' disabled':'')+'>'+
+          '<label class="name" for="c-'+i.id+'"><b>'+esc(i.n)+(i.top?'<span class="star">Prioridade</span>':'')+'</b>'+(i.d?'<small>'+esc(i.d)+'</small>':'')+'</label>'+
+          '<div class="ctrl"><span class="price">R$<input id="v-'+i.id+'" data-v="'+i.id+'" type="number" inputmode="decimal" min="0" step="1" value="'+(Number(i.v)||0)+'" aria-label="Preço de '+esc(i.n)+'"></span>'+
+          '<button type="button" class="chip" data-have="'+i.id+'" aria-pressed="'+(i.st==='tenho')+'">Já tenho</button>'+
+          '<button type="button" class="del" data-del="'+i.id+'" aria-label="Remover '+esc(i.n)+'">×</button></div></li>';
+      }).join(''):'<li class="row"><span></span><span class="name"><small>Nada aqui ainda.</small></span><span></span></li>')+'</ul></section>';
+  }).join('');
+  $('#app').innerHTML='<div class="wrap">'+
+    '<header class="hero"><p class="eyebrow">Lolla 2027 · domingo 21/03</p><h1>Lista de <span>compras</span></h1><p>Tudo pra ir de pochete, power bank e tênis amaciado. Marca o que comprou, toca em "Já tenho" no que já mora no seu armário e ajusta os preços quando achar.</p></header>'+
+    '<section class="sum" aria-label="Resumo"><div class="big"><span class="lab">Pra comprar</span><b class="num">'+brl(total)+'</b><span class="of">'+buy.length+' itens</span></div>'+
+    '<div><span class="lab">Já comprei</span><b class="num">'+brl(gasto)+'</b><span class="of">'+nOk+' de '+buy.length+' itens</span><div class="bar"><i style="width:'+pct.toFixed(1)+'%"></i></div></div>'+
+    '<div><span class="lab">Ainda falta</span><b class="num">'+brl(falta)+'</b><span class="of">preços estimados</span></div></section>'+
+    groups+
+    '<section class="add"><h2>Adicionar item</h2><form id="novo"><input id="novo-nome" placeholder="O que falta?" aria-label="Nome do item" required><input id="novo-valor" type="number" inputmode="decimal" min="0" step="1" placeholder="R$" aria-label="Preço estimado"><select id="novo-grupo" aria-label="Grupo">'+S.grupos.map(function(g){return '<option value="'+g.id+'">'+esc(g.nome)+'</option>'}).join('')+'</select><button type="submit">Adicionar</button></form></section>'+
+    '<p class="tip">Dica: compra pochete, power bank e capa de chuva em promoção de Black Friday. Snacks e fruta só na semana da viagem. O café da manhã de SP já está contado no planner, não precisa juntar de novo.</p>'+
+    '</div>';
+  bind();
+}
+function bind(){
+  document.querySelectorAll('[data-ok]').forEach(function(c){c.onchange=function(){var i=find(c.dataset.ok);i.st=c.checked?'ok':'';commit()}});
+  document.querySelectorAll('[data-have]').forEach(function(b){b.onclick=function(){var i=find(b.dataset.have);i.st=i.st==='tenho'?'':'tenho';commit()}});
+  document.querySelectorAll('[data-v]').forEach(function(inp){inp.onchange=function(){var v=parseFloat(String(inp.value).replace(',','.'));if(isNaN(v)||v<0)return;find(inp.dataset.v).v=Math.round(v*100)/100;commit()}});
+  document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){S.itens=S.itens.filter(function(i){return i.id!==b.dataset.del});commit()}});
+  var f=$('#novo');if(f)f.onsubmit=function(e){e.preventDefault();var n=$('#novo-nome').value.trim();if(!n)return;var v=parseFloat(String($('#novo-valor').value).replace(',','.'));S.itens.push({id:'n'+Date.now(),g:$('#novo-grupo').value,n:n,d:'',v:isNaN(v)?0:Math.round(v*100)/100,st:''});commit()};
+}
+var PAGINA="compras";
+function status(t){var el=$('#save');if(el)el.textContent=t}
+function commit(){
+  render();status('Salvando');clearTimeout(timer);
+  timer=setTimeout(function(){Lolla.save(PAGINA,S).then(function(){status('Tudo salvo')}).catch(function(){status('Não salvou. Confere a internet e tenta de novo.')})},600);
+}
+Lolla.boot(PAGINA,function(d){if(d)S=d;render()});
+})();
+</script>
+</body>
+</html>
