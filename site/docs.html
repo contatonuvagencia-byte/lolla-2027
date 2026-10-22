@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Docs do Lolla</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style id="css">
+/* Docs: hero, "leve na mão" callout, form to add, then cards grouped by category */
+:root{
+  --paper:#F4F1F8;--card:#FFFFFF;--ink:#1D1330;--muted:#6B6180;--line:#E2DCEB;
+  --hot:#D2367E;--hot-ink:#FFFFFF;--sky:#2F6FDB;--ok:#1F8A5B;--okbg:#E3F4EA;--warn:#9A6514;--warnbg:#FBF0DC;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"DM Sans",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#140E1F;--card:#1F1830;--ink:#F1EDF7;--muted:#A69CBB;--line:#352B4A;
+  --hot:#FF5FA2;--hot-ink:#1A0B14;--sky:#7EA8FF;--ok:#5CD39A;--okbg:#173326;--warn:#F2B85B;--warnbg:#3A2C12;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#140E1F;--card:#1F1830;--ink:#F1EDF7;--muted:#A69CBB;--line:#352B4A;
+  --hot:#FF5FA2;--hot-ink:#1A0B14;--sky:#7EA8FF;--ok:#5CD39A;--okbg:#173326;--warn:#F2B85B;--warnbg:#3A2C12;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:grid;grid-template-columns:minmax(0,1fr);gap:26px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700}
+.save{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));margin:0;font-size:12px;background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;z-index:5}
+.save:empty{display:none}
+.hero .eyebrow{margin:0 0 6px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);font-weight:700}
+.hero h1{font-size:clamp(40px,10vw,76px);line-height:.92;font-weight:800;letter-spacing:-.03em}
+.hero h1 span{color:var(--hot)}
+.hero p{margin:10px 0 0;color:var(--muted);max-width:58ch}
+.lab{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.hand{border:2px solid var(--hot);border-radius:18px;padding:16px 18px;background:color-mix(in srgb,var(--hot) 6%,var(--card));display:grid;gap:8px}
+.hand h2{font-size:18px}
+.hand ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.group{display:grid;gap:10px}
+.g-head h2{font-size:22px;font-weight:800}
+.doc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.doc h3{font-size:17px;font-weight:800}
+.doc .nota{margin:0;white-space:pre-wrap;font-size:14px;overflow-wrap:anywhere}
+.doc .file{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.doc .file.none{color:var(--warn)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.acts button,.acts label{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:7px 12px;border-radius:999px;cursor:pointer}
+.acts .main{background:var(--hot);color:var(--hot-ink);border-color:transparent}
+.acts .del{color:var(--muted);margin-left:auto}
+.acts .del.sure{background:var(--hot);color:var(--hot-ink)}
+.acts input[type=file]{display:none}
+.empty{margin:0;color:var(--muted);font-size:14px}
+form.add{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:10px}
+form.add h2{font-size:20px}
+form.add .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,180px);gap:10px}
+@media (max-width:520px){form.add .two{grid-template-columns:minmax(0,1fr)}}
+form.add label{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
+form.add input,form.add select,form.add textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+form.add textarea{min-height:80px;resize:vertical}
+form.add button{justify-self:start;font:inherit;font-weight:700;background:var(--hot);color:var(--hot-ink);border:0;border-radius:10px;padding:10px 18px;cursor:pointer}
+.msg{font-size:13px;color:var(--hot);min-height:1.2em;margin:0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<p class="save" id="save" aria-live="polite"></p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/lolla.js"></script>
+<script>
+var PAGINA='docs',CATS=[['ingresso','Ingresso'],['hospedagem','Hospedagem'],['voo','Voo'],['identidade','Documentos pessoais'],['outros','Outros']];
+var DOCS=[],sure=null,MAX=5*1024*1024;
+function $(q){return document.querySelector(q)}
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function kb(n){return n>1048576?(n/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(n/1024))+' KB'}
+function say(t){$('#save').textContent=t||'';if(t)setTimeout(function(){if($('#save').textContent===t)$('#save').textContent=''},2500)}
+function sb(){return Lolla.sb}
+function load(){return sb().from('lolla_docs').select('id,titulo,categoria,nota,arquivo_nome,mime,tamanho,criado_em').order('criado_em',{ascending:true}).then(function(r){if(r.error){say('Não deu pra carregar');return}DOCS=r.data||[];render()})}
+function readFile(f){return new Promise(function(ok,no){if(f.size>MAX){no(new Error('grande'));return}var r=new FileReader();r.onload=function(){ok(String(r.result).split(',')[1])};r.onerror=no;r.readAsDataURL(f)})}
+function getBlob(id){return sb().from('lolla_docs').select('conteudo,mime').eq('id',id).single().then(function(r){if(r.error||!r.data.conteudo)throw new Error('sem');var b=atob(r.data.conteudo),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new Blob([u],{type:r.data.mime||'application/octet-stream'})})}
+function render(){
+  var groups=CATS.map(function(c){var ds=DOCS.filter(function(d){return d.categoria===c[0]});if(!ds.length)return '';return '<section class="group"><div class="g-head"><h2>'+c[1]+'</h2></div>'+ds.map(card).join('')+'</section>'}).join('');
+  $('#app').innerHTML='<div class="wrap">'+
+  '<header class="hero"><p class="eyebrow">Tudo num lugar só</p><h1>Docs <span>&amp;</span> confirmações</h1><p>Reservas, ingresso, voo e o que mais precisar. Abre aqui na hora ou salva no celular pra ter mesmo sem internet.</p></header>'+
+  '<section class="hand" aria-label="Leve na mão"><h2>🎒 Leve na mão no dia do Lolla</h2><ul><li><b>Documento com foto</b> (RG ou CNH, físico ou digital)</li><li><b>Comprovante de estudante</b>: seu ingresso é meia-entrada, sem ele podem barrar ou cobrar a diferença</li><li><b>Ingresso no app da Ticketmaster</b>, logado e com print de segurança</li></ul></section>'+
+  (groups||'<p class="empty">Nada por aqui ainda. Adiciona o primeiro aí embaixo.</p>')+
+  '<form class="add" id="add"><h2>Adicionar</h2><div class="two"><label>Nome<input id="a-t" required placeholder="Ex.: Passagem de ida"></label><label>Tipo<select id="a-c">'+CATS.map(function(c){return '<option value="'+c[0]+'">'+c[1]+'</option>'}).join('')+'</select></label></div>'+
+  '<label>Anotações<textarea id="a-n" placeholder="Código, horário, telefone, o que precisar ter à mão"></textarea></label>'+
+  '<label>Arquivo (PDF ou foto, até 5 MB)<input id="a-f" type="file" accept="application/pdf,image/*"></label>'+
+  '<button type="submit">Salvar</button><p class="msg" id="a-m" aria-live="polite"></p></form></div>';
+  bind();
+}
+function card(d){
+  return '<article class="doc" data-id="'+d.id+'"><h3>'+esc(d.titulo)+'</h3>'+(d.nota?'<p class="nota">'+esc(d.nota)+'</p>':'')+
+  (d.arquivo_nome?'<p class="file">📎 '+esc(d.arquivo_nome)+' · '+kb(d.tamanho||0)+'</p>':'<p class="file none">Falta anexar o arquivo</p>')+
+  '<div class="acts">'+(d.arquivo_nome?'<button type="button" class="main" data-open="'+d.id+'">Abrir</button><button type="button" data-dl="'+d.id+'">Salvar no celular</button>':'')+
+  '<label>'+(d.arquivo_nome?'Trocar arquivo':'Anexar arquivo')+'<input type="file" accept="application/pdf,image/*" data-att="'+d.id+'"></label>'+
+  '<button type="button" class="del'+(sure===d.id?' sure':'')+'" data-del="'+d.id+'">'+(sure===d.id?'Toca de novo pra excluir':'Excluir')+'</button></div></article>';
+}
+function find(id){return DOCS.filter(function(d){return d.id===id})[0]}
+function bind(){
+  $('#add').onsubmit=function(e){e.preventDefault();var f=$('#a-f').files[0],m=$('#a-m');m.textContent='Salvando...';
+    (f?readFile(f):Promise.resolve(null)).then(function(b64){var row={titulo:$('#a-t').value.trim(),categoria:$('#a-c').value,nota:$('#a-n').value.trim()};if(f){row.arquivo_nome=f.name;row.mime=f.type||'application/octet-stream';row.tamanho=f.size;row.conteudo=b64}
+      return sb().from('lolla_docs').insert(row)}).then(function(r){if(r&&r.error)throw r.error;say('Salvo');load()}).catch(function(err){m.textContent=err&&err.message==='grande'?'Esse arquivo passou de 5 MB. Tenta um print ou um PDF menor.':'Não deu pra salvar, tenta de novo.'})};
+  document.querySelectorAll('[data-att]').forEach(function(inp){inp.onchange=function(){var f=inp.files[0],id=inp.dataset.att;if(!f)return;say('Enviando...');
+    readFile(f).then(function(b64){return sb().from('lolla_docs').update({arquivo_nome:f.name,mime:f.type||'application/octet-stream',tamanho:f.size,conteudo:b64}).eq('id',id)}).then(function(r){if(r.error)throw r.error;say('Arquivo salvo');load()}).catch(function(err){say(err&&err.message==='grande'?'Passou de 5 MB':'Não deu pra enviar')})}});
+  document.querySelectorAll('[data-open]').forEach(function(b){b.onclick=function(){var w=window.open('','_blank');say('Abrindo...');getBlob(b.dataset.open).then(function(bl){var u=URL.createObjectURL(bl);if(w){w.location.href=u}else{location.href=u}say('')}).catch(function(){if(w)w.close();say('Não deu pra abrir')})}});
+  document.querySelectorAll('[data-dl]').forEach(function(b){b.onclick=function(){var d=find(b.dataset.dl);say('Baixando...');getBlob(d.id).then(function(bl){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=d.arquivo_nome||'documento';document.body.appendChild(a);a.click();a.remove();say('')}).catch(function(){say('Não deu pra baixar')})}});
+  document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var id=b.dataset.del;if(sure!==id){sure=id;render();setTimeout(function(){if(sure===id){sure=null;render()}},4000);return}sure=null;sb().from('lolla_docs').delete().eq('id',id).then(function(r){if(r.error){say('Não deu pra excluir');return}say('Excluído');load()})}});
+}
+Lolla.boot(PAGINA,function(){load()});
+</script>
+</body>
+</html>

@@ -9,7 +9,8 @@
   var PAGES = [
     { href: 'index.html', id: 'planner', label: 'Planner' },
     { href: 'roteiro.html', id: 'roteiro', label: 'Roteiro' },
-    { href: 'compras.html', id: 'compras', label: 'Compras' }
+    { href: 'compras.html', id: 'compras', label: 'Compras' },
+    { href: 'docs.html', id: 'docs', label: 'Docs' }
   ];
 
   var css = '' +
@@ -59,7 +60,7 @@
     var g = document.createElement('div');
     g.className = 'lz-gate';
     g.innerHTML = '<form class="lz-card" id="lz-form"><h1>Lolla <span>2027</span></h1>' +
-      '<p>Entra pra ver o seu planner, o roteiro e a lista de compras. Tudo sincroniza entre celular e computador.</p>' +
+      '<p>Entra pra ver o seu planner, o roteiro, as compras e os seus docs. Tudo sincroniza entre celular e computador.</p>' +
       '<label>E-mail<input id="lz-email" type="email" autocomplete="email" required></label>' +
       '<label>Senha<input id="lz-senha" type="password" autocomplete="current-password" minlength="6" required></label>' +
       '<div class="row"><button type="submit" class="main">Entrar</button><button type="button" id="lz-criar">Criar conta</button></div>' +
@@ -93,6 +94,7 @@
   }
 
   window.Lolla = {
+    sb: sb,
     /* Carrega os dados da página; chama ready(dados ou null) depois do login. */
     boot: function (pagina, ready) {
       addStyle();
