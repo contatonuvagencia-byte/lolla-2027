@@ -210,18 +210,18 @@ function render(){
     {q:'Nov/26',t:ver()==='v4'?'Comprar o voo no cartão, como conta normal':ver()==='v3'?'Comprar o voo pra Congonhas e a volta da amiga':'Comprar o voo pra Congonhas',d:get('voo').pago&&(ver()!=='v3'||get('vooamiga').pago)},
     {q:ver()==='v1'||ver()==='v4'?'Nov e Dez':'Nov a Mar',t:ver()==='v1'?'Quitar a mãe':'Devolver a mãe aos pouquinhos',d:c.maeFalta===0},
     {q:ver()==='v4'?'Dez a Mar':'Dez a Mar',t:ver()==='v4'?'Cofrinho: '+brl(c.dezG)+' em dezembro e o resto de janeiro a março':'Alimentar o cofrinho todo mês',d:c.cofreFalta===0},
-    {q:'25/02',t:'Último dia pra cancelar a hospedagem de graça',d:get('hotel').pago},
     {q:'11/03',t:'Prazo final: tudo guardado',d:c.falta===0},
+    {q:'19/03',t:'Pagar o hotel na recepção, no check-in',d:get('hotel').pago},
     {q:'19 a 22/03',t:'Lolla, passeios e Sweater Weather a plenos pulmões',d:false,f:true}
   ].map(function(s){return '<li class="'+(s.d?'done':'')+(s.f?' final':'')+'"><span class="q">'+s.q+'</span><span class="dot" aria-hidden="true"></span><p class="t">'+s.t+'</p></li>'}).join('');
   $('#app').innerHTML=
   '<div class="wrap">'+
   '<header class="hero"><div><p class="eyebrow">Interlagos · São Paulo</p><h1>Lolla <span>2027</span></h1><p class="sub">19 a 22 de março · The Neighbourhood na mira</p></div>'+
   '<div class="count"><b>'+c.dias+'</b><span>dias pro festival</span></div></header>'+
-  (function(){var h=get('hotel');if(!h||!h.cancelaAte)return '';var dl=new Date(h.cancelaAte+'T23:59:00-03:00'),hoje=new Date(),fal=Math.ceil((dl-hoje)/864e5),dd=h.cancelaAte.split('-');return '<section class="stay" aria-label="Sua hospedagem"><div><h2>🏠 Sua hospedagem</h2><p class="nm">'+esc(h.nome)+'</p></div><div class="stay-grid">'+
+  (function(){var h=get('hotel');if(!h||!(h.cancelaAte||h.entrada))return '';var ca=h.cancelaAte||'',dl=new Date(ca+'T23:59:00-03:00'),hoje=new Date(),fal=Math.ceil((dl-hoje)/864e5),dd=ca.split('-');return '<section class="stay" aria-label="Sua hospedagem"><div><h2>🏠 Sua hospedagem</h2><p class="nm">'+esc(h.nome)+'</p></div><div class="stay-grid">'+
 '<div class="stay-box"><span class="lab">Entrada</span><b>'+esc(h.entrada||'')+'</b><span class="d">'+esc(h.entradaDia||'')+'</span></div>'+
 '<div class="stay-box"><span class="lab">Saída</span><b>'+esc(h.saida||'')+'</b><span class="d">'+esc(h.saidaDia||'')+'</span></div>'+
-'<div class="stay-box alert"><span class="lab">Cancela grátis até</span><b>'+dd[2]+'/'+dd[1]+'/'+dd[0]+'</b><span class="d">'+(fal>0?'às 23h59 · faltam '+fal+' dias':'prazo encerrado')+'</span></div></div>'+
+'<div class="stay-box alert"><span class="lab">Cancela grátis até</span><b>'+(ca?dd[2]+'/'+dd[1]+'/'+dd[0]:'A confirmar')+'</b><span class="d">'+(ca?(fal>0?'às 23h59 · faltam '+fal+' dias':'prazo encerrado'):esc(h.cancelaNota||'Pergunta pro hotel'))+'</span></div></div>'+
 (h.planoB?'<p class="planb">Plano B: '+esc(h.planoB)+'</p>':'')+'</section>'})()+
 '<section class="mode" aria-label="Versão do plano"><div class="seg" role="group">'+[['v4','Recomendada'],['v1','Sozinha · mãe até dez'],['v2','Sozinha · mãe até mar'],['v3','Com amiga']].map(function(o){return '<button type="button" id="ver-'+o[0]+'" data-ver="'+o[0]+'" aria-pressed="'+(ver()===o[0])+'">'+o[1]+'</button>'}).join('')+'</div>'+
   (ver()==='v4'?'<p>Feita pras suas contas: o <b>voo vai no cartão como uma conta normal</b>, a mãe fica <b>quitada em novembro e dezembro</b> e o cofrinho pesa <b>quando o celular sai da fatura</b>.</p>':ver()==='v1'?'<p>Outubro fica livre. Você quita a <b>mãe em novembro e dezembro</b>, compra a <b>passagem em novembro</b> e guarda o resto <b>de dezembro a março</b>.</p>':
