@@ -23,7 +23,7 @@
   --hot:#FF5FA2;--hot-ink:#1A0B14;--sky:#7EA8FF;--ok:#5CD39A;--okbg:#173326;--warn:#F2B85B;--warnbg:#3A2C12;color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
-.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:grid;gap:28px}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
 .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700}
 .lab{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
 h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
@@ -122,6 +122,14 @@ button{font:inherit;cursor:pointer}
 .plano .pd{font-size:12px;color:var(--muted)}
 .mode .seg button{font-size:13px;padding:6px 12px}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.stay{border:2px solid var(--hot);border-radius:20px;padding:18px;background:color-mix(in srgb,var(--hot) 6%,var(--card));display:grid;gap:12px}
+.stay h2{margin:0;font-size:18px}.stay .nm{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stay-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stay-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:2px}
+.stay-box .lab{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.stay-box b{font-size:24px;line-height:1.1}.stay-box span.d{font-size:13px;color:var(--muted)}
+.stay-box.alert{border-color:var(--hot);background:var(--hot);color:var(--hot-ink)}.stay-box.alert .lab,.stay-box.alert span.d{color:var(--hot-ink);opacity:.9}
+.stay .planb{margin:0;font-size:13px;color:var(--warn);background:var(--warnbg);border-radius:10px;padding:8px 12px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="assets/lolla.js"></script>
@@ -202,15 +210,20 @@ function render(){
     {q:'Nov/26',t:ver()==='v4'?'Comprar o voo no cartão, como conta normal':ver()==='v3'?'Comprar o voo pra Congonhas e a volta da amiga':'Comprar o voo pra Congonhas',d:get('voo').pago&&(ver()!=='v3'||get('vooamiga').pago)},
     {q:ver()==='v1'||ver()==='v4'?'Nov e Dez':'Nov a Mar',t:ver()==='v1'?'Quitar a mãe':'Devolver a mãe aos pouquinhos',d:c.maeFalta===0},
     {q:ver()==='v4'?'Dez a Mar':'Dez a Mar',t:ver()==='v4'?'Cofrinho: '+brl(c.dezG)+' em dezembro e o resto de janeiro a março':'Alimentar o cofrinho todo mês',d:c.cofreFalta===0},
+    {q:'25/02',t:'Último dia pra cancelar a hospedagem de graça',d:get('hotel').pago},
     {q:'11/03',t:'Prazo final: tudo guardado',d:c.falta===0},
-    {q:'Até 12/03',t:'Pagar o apê em Santo Amaro (cancela grátis até 13/03)',d:get('hotel').pago},
     {q:'19 a 22/03',t:'Lolla, passeios e Sweater Weather a plenos pulmões',d:false,f:true}
   ].map(function(s){return '<li class="'+(s.d?'done':'')+(s.f?' final':'')+'"><span class="q">'+s.q+'</span><span class="dot" aria-hidden="true"></span><p class="t">'+s.t+'</p></li>'}).join('');
   $('#app').innerHTML=
   '<div class="wrap">'+
   '<header class="hero"><div><p class="eyebrow">Interlagos · São Paulo</p><h1>Lolla <span>2027</span></h1><p class="sub">19 a 22 de março · The Neighbourhood na mira</p></div>'+
   '<div class="count"><b>'+c.dias+'</b><span>dias pro festival</span></div></header>'+
-  '<section class="mode" aria-label="Versão do plano"><div class="seg" role="group">'+[['v4','Recomendada'],['v1','Sozinha · mãe até dez'],['v2','Sozinha · mãe até mar'],['v3','Com amiga']].map(function(o){return '<button type="button" id="ver-'+o[0]+'" data-ver="'+o[0]+'" aria-pressed="'+(ver()===o[0])+'">'+o[1]+'</button>'}).join('')+'</div>'+
+  (function(){var h=get('hotel');if(!h||!h.cancelaAte)return '';var dl=new Date(h.cancelaAte+'T23:59:00-03:00'),hoje=new Date(),fal=Math.ceil((dl-hoje)/864e5),dd=h.cancelaAte.split('-');return '<section class="stay" aria-label="Sua hospedagem"><div><h2>🏠 Sua hospedagem</h2><p class="nm">'+esc(h.nome)+'</p></div><div class="stay-grid">'+
+'<div class="stay-box"><span class="lab">Entrada</span><b>'+esc(h.entrada||'')+'</b><span class="d">'+esc(h.entradaDia||'')+'</span></div>'+
+'<div class="stay-box"><span class="lab">Saída</span><b>'+esc(h.saida||'')+'</b><span class="d">'+esc(h.saidaDia||'')+'</span></div>'+
+'<div class="stay-box alert"><span class="lab">Cancela grátis até</span><b>'+dd[2]+'/'+dd[1]+'/'+dd[0]+'</b><span class="d">'+(fal>0?'às 23h59 · faltam '+fal+' dias':'prazo encerrado')+'</span></div></div>'+
+(h.planoB?'<p class="planb">Plano B: '+esc(h.planoB)+'</p>':'')+'</section>'})()+
+'<section class="mode" aria-label="Versão do plano"><div class="seg" role="group">'+[['v4','Recomendada'],['v1','Sozinha · mãe até dez'],['v2','Sozinha · mãe até mar'],['v3','Com amiga']].map(function(o){return '<button type="button" id="ver-'+o[0]+'" data-ver="'+o[0]+'" aria-pressed="'+(ver()===o[0])+'">'+o[1]+'</button>'}).join('')+'</div>'+
   (ver()==='v4'?'<p>Feita pras suas contas: o <b>voo vai no cartão como uma conta normal</b>, a mãe fica <b>quitada em novembro e dezembro</b> e o cofrinho pesa <b>quando o celular sai da fatura</b>.</p>':ver()==='v1'?'<p>Outubro fica livre. Você quita a <b>mãe em novembro e dezembro</b>, compra a <b>passagem em novembro</b> e guarda o resto <b>de dezembro a março</b>.</p>':
    ver()==='v2'?'<p>Passagem em <b>novembro</b>, e a mãe e o resto vão sendo guardados <b>todo mês até 11/03</b>.</p>':
    (function(){var eco=S.items.reduce(function(t,i){return t+(split(i)?(Number(i.valor)||0)-part(i):0)},0),volta=part(get('vooamiga'));return '<div class="seg" role="group" aria-label="Quando ela chega"><button type="button" id="cheg-sex" data-cheg="sex" aria-pressed="'+(cheg()==='sex')+'">Ela chega sexta à noite</button><button type="button" id="cheg-sab" data-cheg="sab" aria-pressed="'+(cheg()==='sab')+'">Ela chega sábado</button></div><p>Apê e Uber divididos <b>pelo tempo que cada uma fica</b>, ela paga o ônibus e você banca a <b>volta dela</b> junto com a sua passagem em novembro. '+(eco-volta>=0?'Você fica <b>'+brl(eco-volta)+'</b> no lucro':'Sai <b>'+brl(volta-eco)+'</b> a mais')+' comparado a ir sozinha.</p>'})())+'</section>'+
